@@ -26,6 +26,18 @@ const routes = [
     //     ],
     // },
     {
+        path: "/A2",
+        name: "A2",
+        component: BaseLayout,
+        children: [
+            {
+                path: "DSA21000",
+                name: "DSA21000",
+                component: () => import("@/views/A2/DSA21000.vue"),
+            },
+        ],
+    },
+    {
         path: "/:catchAll(.*)",
         redirect: "/",
     },
