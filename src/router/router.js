@@ -5,6 +5,18 @@ const routes = [
         path: "/",
         component: BaseLayout,
     },
+    {
+        path: "/AFY1",
+        name: "AFY1",
+        component: BaseLayout,
+        children: [
+            {
+                path: "AFY10100",
+                name: "AFY10100",
+                component: () => import("@/views/AFY1/AFY10100.vue"),
+            },
+        ],
+    },
     // 新增頁面路由請比照以下格式：
     // {
     //     path: "/<ModuleCode>",
