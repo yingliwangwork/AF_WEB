@@ -1,443 +1,367 @@
 <template>
-    <div class="afy10100 q-pa-sm q-gutter-sm">
-        <q-toolbar>
-            <q-toolbar-title>● 公會通報查詢</q-toolbar-title>
-            <q-space />
-            <span>畫面編號：AFY10100</span>
-        </q-toolbar>
+    <div>
+        <CxlBreadcrumbs
+            class="q-mb-md"
+            :breadcrumbs="navCollection"
+            :routerPath="$route.path"
+            :rootPath="rootPath"
+        />
+        <div class="cxl-title-h1 q-mb-md">公會通報查詢</div>
 
-        <q-card flat bordered>
-            <q-card-section class="text-subtitle1">公會通報查詢</q-card-section>
-            <q-card-section>
-                <q-markup-table separator="cell" dense flat bordered>
-                    <tbody>
-                        <tr>
-                            <td class="tbYellow">身份證字號/統一編號</td>
-                            <td class="tbYellow2">
-                                <q-input
-                                    v-model="inputId"
-                                    :error="!!errors.inputId"
-                                    :error-message="errors.inputId"
-                                    dense
-                                    outlined
-                                />
-                                <q-checkbox
-                                    v-if="showReturnOption"
-                                    v-model="isReturnChecked"
-                                    label="同步更新公會回檔狀態"
-                                    true-value="Y"
-                                    false-value=""
-                                    dense
-                                />
-                            </td>
-                            <td class="tbYellow">契約角色</td>
-                            <td class="tbYellow2">
-                                <q-select
-                                    v-model="role"
-                                    :options="roleOptions"
-                                    option-label="label"
-                                    option-value="value"
-                                    emit-value
-                                    map-options
-                                    dense
-                                    outlined
-                                />
-                            </td>
-                            <td class="tbYellow">保單效力</td>
-                            <td class="tbYellow2">
-                                <q-select
-                                    v-model="status"
-                                    :options="statusOptions"
-                                    option-label="label"
-                                    option-value="value"
-                                    emit-value
-                                    map-options
-                                    dense
-                                    outlined
-                                />
-                            </td>
-                            <td class="tbYellow2 text-center">
-                                <q-btn
-                                    label="F2查詢"
-                                    color="primary"
-                                    dense
-                                    filled
-                                    unelevated
-                                    @click="doQuery"
-                                />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="tbYellow">姓名</td>
-                            <td class="tbYellow2">{{ dataMap.NAME }}</td>
-                            <td class="tbYellow">生日</td>
-                            <td class="tbYellow2">{{ dataMap.BIRTHDAY }}</td>
-                            <td class="tbYellow">公會資料取回日期</td>
-                            <td class="tbYellow2" colspan="2">{{ dataMap.LAST_UPDATE_TIME }}</td>
-                        </tr>
-                    </tbody>
-                </q-markup-table>
-            </q-card-section>
+        <q-card class="cxl-card q-pa-md q-mb-lg">
+            <q-markup-table
+                class="cxl-table cxl-table-horizontal"
+                separator="cell"
+                flat
+                bordered
+            >
+                <thead>
+                    <tr>
+                        <th colspan="6" class="cxl-table-header">查詢條件</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>
+                            <span class="cxl-text-danger">*</span>
+                            身份證字號/統一編號
+                        </th>
+                        <td>
+                            <CxlInput
+                                v-model="inputId"
+                                placeholder="請輸入身份證字號或統一編號"
+                                :error="!!errors.inputId"
+                                :error-message="errors.inputId"
+                            />
+                            <q-checkbox
+                                v-if="showReturnOption"
+                                v-model="isReturnChecked"
+                                class="cxl-checkbox q-mt-sm"
+                                label="同步更新公會回檔狀態"
+                                true-value="Y"
+                                false-value=""
+                                dense
+                            />
+                        </td>
+                        <th>契約角色</th>
+                        <td>
+                            <CxlDropdown
+                                v-model="role"
+                                :options="roleOptions"
+                                map-options
+                                emit-value
+                            />
+                        </td>
+                        <th>保單效力</th>
+                        <td>
+                            <CxlDropdown
+                                v-model="status"
+                                :options="statusOptions"
+                                map-options
+                                emit-value
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>姓名</th>
+                        <td>{{ dataMap.NAME }}</td>
+                        <th>生日</th>
+                        <td>{{ dataMap.BIRTHDAY }}</td>
+                        <th>公會資料取回日期</th>
+                        <td>{{ dataMap.LAST_UPDATE_TIME }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="row justify-center q-gutter-sm">
+                                <CxlButton label="F2查詢" @click="doQuery" />
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </q-markup-table>
         </q-card>
 
-        <q-card flat bordered>
-            <q-card-section class="text-subtitle1">保障項目彙整</q-card-section>
-            <q-card-section class="afy10100__table-scroll">
-                <q-markup-table separator="cell" dense flat bordered>
+        <q-card class="cxl-card q-pa-md q-mb-lg">
+            <div class="text-subtitle1 text-weight-bold q-mb-md">保障項目彙整</div>
+            <div class="scroll">
+                <q-markup-table class="cxl-table" separator="cell" flat bordered>
                     <thead>
-                        <tr>
+                        <tr class="cxl-table-header">
                             <template v-for="group in 3" :key="`benefit-header-${group}`">
-                                <th class="tbBlue2">項目</th>
-                                <th class="tbBlue">合計</th>
-                                <th class="tbBlue">同業合計</th>
-                                <th class="tbBlue">收件</th>
-                                <th class="tbBlue">承保</th>
+                                <th>項目</th>
+                                <th>合計</th>
+                                <th>同業合計</th>
+                                <th>收件</th>
+                                <th>承保</th>
                             </template>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="row in benefitSummaryRows" :key="row[0].code">
                             <template v-for="item in row" :key="item.code">
-                                <td class="tbBlue2 text-center">{{ item.label }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.total) }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.sameTradeTotal) }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.received) }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.underwritten) }}</td>
+                                <th>{{ item.label }}</th>
+                                <td class="text-right">{{ formatNumber(item.total) }}</td>
+                                <td class="text-right">
+                                    {{ formatNumber(item.sameTradeTotal) }}
+                                </td>
+                                <td class="text-right">{{ formatNumber(item.received) }}</td>
+                                <td class="text-right">
+                                    {{ formatNumber(item.underwritten) }}
+                                </td>
                             </template>
                         </tr>
                     </tbody>
                 </q-markup-table>
-            </q-card-section>
+            </div>
         </q-card>
 
-        <q-card flat bordered>
-            <q-card-section class="text-subtitle1">保費資料彙整</q-card-section>
-            <q-card-section class="afy10100__table-scroll">
-                <q-markup-table separator="cell" dense flat bordered>
+        <q-card class="cxl-card q-pa-md q-mb-lg">
+            <div class="text-subtitle1 text-weight-bold q-mb-md">保費資料彙整</div>
+            <div class="scroll">
+                <q-markup-table class="cxl-table" separator="cell" flat bordered>
                     <thead>
-                        <tr>
+                        <tr class="cxl-table-header">
                             <template v-for="item in premiumSummary" :key="`${item.code}-header`">
-                                <th class="tbBlue2">項目</th>
-                                <th class="tbBlue">合計</th>
-                                <th class="tbBlue">收件</th>
-                                <th class="tbBlue">承保</th>
+                                <th>項目</th>
+                                <th>合計</th>
+                                <th>收件</th>
+                                <th>承保</th>
                             </template>
-                            <th class="tbBlue">操作者</th>
+                            <th>操作者</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <template v-for="item in premiumSummary" :key="item.code">
-                                <td class="tbBlue2 text-center">{{ item.label }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.total) }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.received) }}</td>
-                                <td class="tbYellow2 text-center">{{ formatNumber(item.underwritten) }}</td>
+                                <th>{{ item.label }}</th>
+                                <td class="text-right">{{ formatNumber(item.total) }}</td>
+                                <td class="text-right">{{ formatNumber(item.received) }}</td>
+                                <td class="text-right">
+                                    {{ formatNumber(item.underwritten) }}
+                                </td>
                             </template>
-                            <td class="tbYellow2 text-center">{{ dataMap.UPDATE_ID }}</td>
+                            <td class="text-center">{{ dataMap.UPDATE_ID }}</td>
                         </tr>
                     </tbody>
                 </q-markup-table>
-            </q-card-section>
+            </div>
         </q-card>
 
-        <q-card v-if="selectedRecordKey" flat bordered>
-            <q-card-section class="text-subtitle1">資料編輯區</q-card-section>
-            <q-card-section class="afy10100__table-scroll">
-                <q-markup-table separator="cell" dense flat bordered>
+        <q-card v-if="hasSelectedRecord" class="cxl-card q-pa-md q-mb-lg">
+            <div class="text-subtitle1 text-weight-bold q-mb-md">資料編輯區</div>
+
+            <div class="scroll q-mb-md">
+                <q-markup-table class="cxl-table-form" separator="horizontal" flat bordered>
                     <tbody>
                         <tr v-for="row in readonlyEditRows" :key="row[0].key">
                             <template v-for="field in row" :key="field.key">
-                                <td class="tbYellow text-center">{{ field.label }}</td>
-                                <td class="tbYellow2 text-center">{{ field.value }}</td>
+                                <th>{{ field.label }}</th>
+                                <td>{{ field.value }}</td>
                             </template>
                         </tr>
                     </tbody>
                 </q-markup-table>
-            </q-card-section>
+            </div>
 
-            <q-card-section class="afy10100__table-scroll">
-                <q-markup-table separator="cell" dense flat bordered>
+            <div class="scroll q-mb-md">
+                <q-markup-table class="cxl-table-form" separator="horizontal" flat bordered>
                     <tbody>
                         <tr v-for="row in benefitEditRows" :key="row[0].key">
                             <template v-for="field in row" :key="field.key">
-                                <td class="tbYellow text-center">{{ field.label }}</td>
-                                <td class="tbYellow2">
-                                    <q-input
+                                <th>{{ field.label }}</th>
+                                <td>
+                                    <CxlInput
                                         v-if="!field.placeholder"
                                         v-model="editRecord[field.key]"
-                                        dense
-                                        outlined
+                                        :placeholder="`請輸入${field.label}`"
                                     />
                                 </td>
                             </template>
                         </tr>
                     </tbody>
                 </q-markup-table>
-            </q-card-section>
+            </div>
 
-            <q-card-section class="afy10100__table-scroll">
-                <q-markup-table separator="cell" dense flat bordered>
+            <div class="scroll">
+                <q-markup-table class="cxl-table-form" separator="horizontal" flat bordered>
                     <tbody>
                         <tr>
-                            <td class="tbYellow text-center">保經代分類</td>
-                            <td class="tbYellow2">
-                                <q-input v-model="editRecord.BROKTYPE" dense outlined />
+                            <th>保經代分類</th>
+                            <td>
+                                <CxlInput
+                                    v-model="editRecord.BROKTYPE"
+                                    placeholder="請輸入保經代分類"
+                                />
                             </td>
-                            <td class="tbYellow text-center">要保人姓名</td>
-                            <td class="tbYellow2">
-                                <q-input v-model="editRecord.A_NAME" dense outlined />
+                            <th>要保人姓名</th>
+                            <td>
+                                <CxlInput
+                                    v-model="editRecord.A_NAME"
+                                    placeholder="請輸入要保人姓名"
+                                />
                             </td>
-                            <td class="tbYellow text-center">要保人身分證號碼</td>
-                            <td class="tbYellow2">
-                                <q-input v-model="editRecord.A_ID" dense outlined />
+                            <th>要保人身分證號碼</th>
+                            <td>
+                                <CxlInput
+                                    v-model="editRecord.A_ID"
+                                    placeholder="請輸入要保人身分證號碼"
+                                />
                             </td>
-                            <td class="tbYellow text-center">要保人出生日期</td>
-                            <td class="tbYellow2">
-                                <q-input v-model="editRecord.A_BIRTHDAY" dense outlined />
+                            <th>要保人出生日期</th>
+                            <td>
+                                <CxlInput
+                                    v-model="editRecord.A_BIRTHDAY"
+                                    placeholder="請輸入要保人出生日期"
+                                />
                             </td>
-                            <td class="tbYellow text-center">要保人與被保險人關係</td>
-                            <td class="tbYellow2">
-                                <q-input v-model="editRecord.RELATION" dense outlined />
+                            <th>要保人與被保險人關係</th>
+                            <td>
+                                <CxlInput
+                                    v-model="editRecord.RELATION"
+                                    placeholder="請輸入關係"
+                                />
                             </td>
                         </tr>
                         <tr>
-                            <td class="tbYellow text-center">被保險人性別</td>
-                            <td class="tbYellow2">
-                                <q-select
+                            <th>被保險人性別</th>
+                            <td>
+                                <CxlDropdown
                                     v-model="editRecord.I_GENDER"
                                     :options="genderOptions"
-                                    option-label="label"
-                                    option-value="value"
-                                    emit-value
                                     map-options
-                                    dense
-                                    outlined
+                                    emit-value
                                 />
                             </td>
-                            <td class="tbYellow text-center">公、自費件</td>
-                            <td class="tbYellow2">
-                                <q-select
+                            <th>公、自費件</th>
+                            <td>
+                                <CxlDropdown
                                     v-model="editRecord.PAY_TYPE"
                                     :options="payTypeOptions"
-                                    option-label="label"
-                                    option-value="value"
-                                    emit-value
                                     map-options
-                                    dense
-                                    outlined
+                                    emit-value
                                 />
                             </td>
-                            <td class="tbYellow text-center">來源別</td>
-                            <td class="tbYellow2 text-center">{{ editRecord.OIU_IND_DESC }}</td>
-                            <td class="tbYellow text-center">銷售通路</td>
-                            <td class="tbYellow2 text-center">{{ editRecord.SALE_CHNL_DESC }}</td>
-                            <td class="tbYellow text-center">商品代碼</td>
-                            <td class="tbYellow2 text-center">{{ editRecord.PROD_CODE }}</td>
+                            <th>來源別</th>
+                            <td>{{ editRecord.OIU_IND_DESC }}</td>
+                            <th>銷售通路</th>
+                            <td>{{ editRecord.SALE_CHNL_DESC }}</td>
+                            <th>商品代碼</th>
+                            <td>{{ editRecord.PROD_CODE }}</td>
                         </tr>
                     </tbody>
                 </q-markup-table>
-            </q-card-section>
+            </div>
 
-            <q-card-actions align="center">
-                <q-btn
-                    label="F9修改"
-                    color="primary"
-                    dense
-                    filled
-                    unelevated
-                    @click="doEdit"
-                />
-                <q-btn
-                    label="F10刪除"
-                    color="primary"
-                    dense
-                    filled
-                    unelevated
-                    @click="doDelete"
-                />
-                <q-btn
+            <div class="row justify-center q-gutter-sm q-mt-md">
+                <CxlButton label="F9修改" @click="doEdit" />
+                <CxlButton label="F10刪除" theme="danger" @click="doDelete" />
+                <CxlButton
                     label="取消"
-                    color="primary"
-                    dense
-                    outlined
-                    unelevated
+                    theme="primary-outline"
                     @click="clearSelection"
                 />
-            </q-card-actions>
+            </div>
         </q-card>
 
-        <q-card flat bordered>
-            <q-card-section class="text-subtitle1">新制通報資料明細</q-card-section>
-            <q-card-section class="afy10100__table-scroll">
-                <q-markup-table separator="cell" dense flat bordered>
-                    <thead>
-                        <tr>
-                            <th class="tbBlue">序號</th>
-                            <th class="tbBlue">選取</th>
-                            <th class="tbBlue">
-                                <q-btn
-                                    :label="`通報方式${sortIndicator('INSR_TYPE')}`"
-                                    dense
-                                    flat
-                                    no-caps
-                                    @click="sortResults('INSR_TYPE')"
-                                />
-                            </th>
-                            <th class="tbBlue">
-                                <q-btn
-                                    :label="`公司別${sortIndicator('CMNY_CODE')}`"
-                                    dense
-                                    flat
-                                    no-caps
-                                    @click="sortResults('CMNY_CODE')"
-                                />
-                            </th>
-                            <th class="tbBlue">
-                                <q-btn
-                                    :label="`保單號碼${sortIndicator('POLICY_NO')}`"
-                                    dense
-                                    flat
-                                    no-caps
-                                    @click="sortResults('POLICY_NO')"
-                                />
-                            </th>
-                            <th class="tbBlue">銷售通路</th>
-                            <th class="tbBlue">商品代碼</th>
-                            <th class="tbBlue">保單分類</th>
-                            <th class="tbBlue">險種分類</th>
-                            <th class="tbBlue">
-                                <q-btn
-                                    :label="`險種${sortIndicator('PROD_KIND')}`"
-                                    dense
-                                    flat
-                                    no-caps
-                                    @click="sortResults('PROD_KIND')"
-                                />
-                            </th>
-                            <th class="tbBlue">保單狀況</th>
-                            <th class="tbBlue">身故保額</th>
-                            <th class="tbBlue">醫療限額</th>
-                            <th class="tbBlue">醫療日額</th>
-                            <th class="tbBlue">
-                                <q-btn
-                                    :label="`契約生效日${sortIndicator('ISSUE_DATE')}`"
-                                    dense
-                                    flat
-                                    no-caps
-                                    @click="sortResults('ISSUE_DATE')"
-                                />
-                            </th>
-                            <th class="tbBlue">契約滿期日</th>
-                            <th class="tbBlue">要保人姓名</th>
-                            <th class="tbBlue">通報時間</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="row in sortedResultList" :key="getRowKey(row)">
-                            <td class="tbYellow2 text-center">{{ getSourceIndex(row) + 1 }}</td>
-                            <td class="tbYellow2 text-center">
-                                <q-radio
-                                    :model-value="selectedRecordKey"
-                                    :val="getRowKey(row)"
-                                    @update:model-value="selectItem(row)"
-                                />
-                            </td>
-                            <td class="tbYellow2">
-                                <a href="" @click.prevent="openDetail(row)">
-                                    {{ row.INSR_TYPE }}&nbsp;{{ insrMap[row.INSR_TYPE] }}
-                                </a>
-                            </td>
-                            <td class="tbYellow2">{{ row.COMPANY_NAME }}</td>
-                            <td class="tbYellow2 text-center">{{ row.POLICY_NO }}</td>
-                            <td class="tbYellow2">{{ row.SALE_CHNL }}</td>
-                            <td class="tbYellow2">{{ row.PROD_CODE }}</td>
-                            <td class="tbYellow2">{{ row.POLICY_CAT }}</td>
-                            <td class="tbYellow2">{{ row.POLICY_DUTY }}</td>
-                            <td class="tbYellow2">{{ row.PROD_KIND }}</td>
-                            <td class="tbYellow2">{{ row.STATUS }}</td>
-                            <td class="tbYellow2">{{ formatNumber(row.PAY_AMT1) }}</td>
-                            <td class="tbYellow2">{{ formatNumber(row.PAY_AMT6) }}</td>
-                            <td class="tbYellow2">{{ formatNumber(row.PAY_AMT8) }}</td>
-                            <td class="tbYellow2">{{ row.ISSUE_DATE }}</td>
-                            <td class="tbYellow2">{{ row.LPS_DATE }}</td>
-                            <td class="tbYellow2">{{ row.A_NAME }}</td>
-                            <td class="tbYellow2">{{ row.UPDATE_TIME }}</td>
-                        </tr>
-                        <tr v-if="isAllow">
-                            <td class="tbYellow2 text-center" colspan="18">
-                                <q-btn
-                                    label="F8即時取回公會資料"
-                                    color="primary"
-                                    dense
-                                    filled
-                                    unelevated
-                                    @click="doAsyncCheck"
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </q-markup-table>
-            </q-card-section>
-        </q-card>
-
-        <q-card flat bordered>
-            <q-card-section>
-                <ol class="afy10100__notes">
-                    <li>銷售通路：1網路投保 2業務員 3保經、保代 4電話行銷 5機場櫃檯</li>
-                    <li>保單分類：1個人；2團體</li>
-                    <li>險種分類：1人壽保險；2傷害保險；3健康保險；4年金保險。</li>
-                    <li>
-                        險種：01一般；02特定；03投資型；04日額型；05實支實付型；06日額或實支實付擇一型；07手術型；08重大疾病；09帳戶型；10長期看護型；11喪失工作能力；12防癌；13旅平險；14微型；15微型實支實付；16小額終老保險；17失能扶助保險；18登山綜合保險；19定期人壽保險(不含一年期)；20海域活動綜合保險；21一年期
-                    </li>
-                    <li>繳別：1躉繳；2年繳；3半年繳；4季繳；5月繳；6彈性繳；9繳費期滿</li>
-                    <li>
-                        保單狀況：收件：01有效；06未承保取消件；07契約註銷；11滿期(契約到期)；12鍵值欄位通報錯誤終止；15通報更正；50一○七條/一○七條之一承保資料；51一○七條理賠資料（未滿14足歲之未成年人）；52一○七條/一○七條之一理賠資料（精神障礙或其他心智缺陷/受監護宣告尚未撤銷）。承保：01有效；02增額；03減額；04展期；05繳清；06契約撤銷；07停效；10解除契約；11滿期(契約到期)；12鍵值欄位通報錯誤終止；20終止1：由要保人提出終止契約效力；21終止2：主被保險人死亡，其他被保險人附同時終止或完全失能或理賠給付後終止附約；30被保險人因自然死身故；31被保險人因意外身故；32被保險人因其他原因故；50一○七條/一○七條之一承保資料；51一○七條理賠資料（未滿14足歲之未成年人）；52一○七條/一○七條之一理賠資料（精神障礙或其他心智缺陷/受監護宣告尚未撤銷）。
-                    </li>
-                    <li>保障及保費彙整欄位，金額依頁面上的筆數加總，含本公司及產、壽險通報資料。</li>
-                    <li>即時捉取公會資料：輸入身份證字號∕統一證號，按F8即時捉取公會資料鈕。</li>
-                </ol>
-            </q-card-section>
-        </q-card>
-
-        <q-dialog v-model="showAsyncConfirmation">
-            <q-card>
-                <q-card-section>{{ asyncConfirmationMessage }}</q-card-section>
-                <q-card-actions align="right">
-                    <q-btn label="否" color="primary" dense outlined unelevated v-close-popup />
-                    <q-btn
-                        label="是"
-                        color="primary"
+        <q-card class="cxl-card q-pa-md q-mb-lg">
+            <div class="text-subtitle1 text-weight-bold q-mb-md">新制通報資料明細</div>
+            <CxlTable
+                v-model:pagination="tablePagination"
+                :rows="resultTableRows"
+                :columns="RESULT_COLUMNS"
+                :selected="selectedRows"
+                :rows-per-page-options="[0]"
+                row-key="_rowKey"
+                selection="single"
+                separator="cell"
+                hide-bottom
+                @update:selected="updateSelectedRows"
+            >
+                <template #body-selection="scope">
+                    <q-radio
+                        v-model="scope.selected"
+                        class="cxl-radio"
+                        :val="true"
                         dense
-                        filled
-                        unelevated
-                        @click="confirmAsync"
                     />
-                </q-card-actions>
-            </q-card>
-        </q-dialog>
+                </template>
+                <template #body-cell-insrType="props">
+                    <q-td :props="props">
+                        <a href="" @click.prevent="openDetail(props.row)">
+                            {{ props.row.INSR_TYPE }}&nbsp;{{
+                                insrMap[props.row.INSR_TYPE]
+                            }}
+                        </a>
+                    </q-td>
+                </template>
+            </CxlTable>
+            <div v-if="isAllow" class="row justify-center q-mt-md">
+                <CxlButton label="F8即時取回公會資料" @click="doAsyncCheck" />
+            </div>
+        </q-card>
 
-        <q-dialog v-model="showDetail" full-width>
-            <q-card>
-                <q-card-section class="scroll">
-                    <!-- TODO: PENDING_CONVERSION - AFY10100ShowDetail -->
-                    <!-- <AFY10100ShowDetail v-bind="detailParams" /> -->
-                </q-card-section>
-                <q-card-actions align="right">
-                    <q-btn label="關閉" color="primary" dense filled unelevated v-close-popup />
-                </q-card-actions>
-            </q-card>
-        </q-dialog>
+        <q-card class="cxl-card q-pa-md">
+            <ol class="q-my-none q-pl-lg">
+                <li>銷售通路：1網路投保 2業務員 3保經、保代 4電話行銷 5機場櫃檯</li>
+                <li>保單分類：1個人；2團體</li>
+                <li>險種分類：1人壽保險；2傷害保險；3健康保險；4年金保險。</li>
+                <li>
+                    險種：01一般；02特定；03投資型；04日額型；05實支實付型；06日額或實支實付擇一型；07手術型；08重大疾病；09帳戶型；10長期看護型；11喪失工作能力；12防癌；13旅平險；14微型；15微型實支實付；16小額終老保險；17失能扶助保險；18登山綜合保險；19定期人壽保險(不含一年期)；20海域活動綜合保險；21一年期
+                </li>
+                <li>繳別：1躉繳；2年繳；3半年繳；4季繳；5月繳；6彈性繳；9繳費期滿</li>
+                <li>
+                    保單狀況：收件：01有效；06未承保取消件；07契約註銷；11滿期(契約到期)；12鍵值欄位通報錯誤終止；15通報更正；50一○七條/一○七條之一承保資料；51一○七條理賠資料（未滿14足歲之未成年人）；52一○七條/一○七條之一理賠資料（精神障礙或其他心智缺陷/受監護宣告尚未撤銷）。承保：01有效；02增額；03減額；04展期；05繳清；06契約撤銷；07停效；10解除契約；11滿期(契約到期)；12鍵值欄位通報錯誤終止；20終止1：由要保人提出終止契約效力；21終止2：主被保險人死亡，其他被保險人附同時終止或完全失能或理賠給付後終止附約；30被保險人因自然死身故；31被保險人因意外身故；32被保險人因其他原因故；50一○七條/一○七條之一承保資料；51一○七條理賠資料（未滿14足歲之未成年人）；52一○七條/一○七條之一理賠資料（精神障礙或其他心智缺陷/受監護宣告尚未撤銷）。
+                </li>
+                <li>保障及保費彙整欄位，金額依頁面上的筆數加總，含本公司及產、壽險通報資料。</li>
+                <li>即時捉取公會資料：輸入身份證字號∕統一證號，按F8即時捉取公會資料鈕。</li>
+            </ol>
+        </q-card>
+
+        <CxlModal
+            v-model="showAsyncConfirmation"
+            title="確認提示"
+            cancelText="否"
+            confirmText="是"
+            @cancel="closeAsyncConfirmation"
+            @confirm="confirmAsync"
+        >
+            <p class="q-my-none">{{ asyncConfirmationMessage }}</p>
+        </CxlModal>
+
+        <CxlModal
+            v-model="showDetail"
+            title="通報資料明細"
+            size="lg"
+            cancelText="關閉"
+            content-scroll
+            @cancel="closeDetail"
+        >
+            <!-- TODO: PENDING_CONVERSION - AFY10100ShowDetail -->
+            <!-- <AFY10100ShowDetail v-bind="detailParams" /> -->
+        </CxlModal>
     </div>
 </template>
 
 <script setup>
 import { computed, inject, onBeforeUnmount, onMounted, reactive, ref } from "vue";
-import { useQuasar } from "quasar";
+import { useRoute } from "vue-router";
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
+import {
+    CxlBreadcrumbs,
+    CxlButton,
+    CxlDropdown,
+    CxlInput,
+    CxlModal,
+    CxlTable,
+} from "vue-cathaylife-component";
+import navCollection from "@/service/NavCollection.js";
+import afy10100Service from "@/service/AFY10100Service.js";
 
 const $cathayAxios = inject("$cathayAxios");
-const $q = useQuasar();
+const $notify = inject("$notify");
+const $route = useRoute();
+const rootPath = { label: "首頁", url: "/" };
 
 const BENEFIT_FIELDS = [
     { key: "PAY_AMT1", label: "身故" },
@@ -494,7 +418,9 @@ const EDIT_READONLY_FIELDS = [
 
 const EDIT_REQUEST_KEYS = [
     "TBL_NAME",
-    ...EDIT_READONLY_FIELDS.map(({ key }) => key).filter((key) => key !== "UPDATE_TIME_DISPLAY"),
+    ...EDIT_READONLY_FIELDS.map(({ key }) => key).filter(
+        (key) => key !== "UPDATE_TIME_DISPLAY",
+    ),
     ...BENEFIT_FIELDS.map(({ key }) => key),
     "BROKTYPE",
     "A_NAME",
@@ -567,6 +493,110 @@ const payTypeOptions = [
     { label: "自費", value: "2" },
 ];
 
+const numberFormatter = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+});
+
+/**
+ * 將金額格式化為千分位顯示。
+ *
+ * @param {string|number|null|undefined} value - 原始金額
+ * @returns {string|number} 格式化後的金額
+ */
+const formatNumber = (value) => {
+    if (value === null || value === undefined || value === "") {
+        return "";
+    }
+
+    const number = Number(value);
+    return Number.isNaN(number) ? value : numberFormatter.format(number);
+};
+
+const RESULT_COLUMNS = [
+    {
+        name: "index",
+        label: "序號",
+        field: "_sourceIndex",
+        align: "center",
+        format: (value) => value + 1,
+    },
+    {
+        name: "insrType",
+        label: "通報方式",
+        field: "INSR_TYPE",
+        align: "left",
+        sortable: true,
+    },
+    {
+        name: "company",
+        label: "公司別",
+        field: "CMNY_CODE",
+        align: "left",
+        sortable: true,
+        format: (value, row) => row.COMPANY_NAME ?? value,
+    },
+    {
+        name: "policyNo",
+        label: "保單號碼",
+        field: "POLICY_NO",
+        align: "center",
+        sortable: true,
+    },
+    { name: "saleChnl", label: "銷售通路", field: "SALE_CHNL", align: "left" },
+    { name: "prodCode", label: "商品代碼", field: "PROD_CODE", align: "left" },
+    { name: "policyCat", label: "保單分類", field: "POLICY_CAT", align: "left" },
+    {
+        name: "policyDuty",
+        label: "險種分類",
+        field: "POLICY_DUTY",
+        align: "left",
+    },
+    {
+        name: "prodKind",
+        label: "險種",
+        field: "PROD_KIND",
+        align: "left",
+        sortable: true,
+    },
+    { name: "status", label: "保單狀況", field: "STATUS", align: "left" },
+    {
+        name: "payAmt1",
+        label: "身故保額",
+        field: "PAY_AMT1",
+        align: "right",
+        format: formatNumber,
+    },
+    {
+        name: "payAmt6",
+        label: "醫療限額",
+        field: "PAY_AMT6",
+        align: "right",
+        format: formatNumber,
+    },
+    {
+        name: "payAmt8",
+        label: "醫療日額",
+        field: "PAY_AMT8",
+        align: "right",
+        format: formatNumber,
+    },
+    {
+        name: "issueDate",
+        label: "契約生效日",
+        field: "ISSUE_DATE",
+        align: "center",
+        sortable: true,
+    },
+    { name: "lpsDate", label: "契約滿期日", field: "LPS_DATE", align: "center" },
+    { name: "applicantName", label: "要保人姓名", field: "A_NAME", align: "left" },
+    {
+        name: "updateTime",
+        label: "通報時間",
+        field: "UPDATE_TIME",
+        align: "center",
+    },
+];
+
 const validationSchema = object({
     inputId: string().required("身份證字號/統一編號：不得為空值"),
 });
@@ -591,17 +621,21 @@ const resultList = ref([]);
 const insrMap = ref({});
 const oiuIndDesc = ref({});
 const saleChnlDesc = ref({});
-const selectedRecordKey = ref("");
-const selectedItemIndex = ref(null);
+const selectedRows = ref([]);
 const showAsyncConfirmation = ref(false);
 const asyncConfirmationMessage = ref("");
 const showDetail = ref(false);
 const detailParams = ref({});
-const sortState = reactive({
-    field: "",
-    descending: false,
+const tablePagination = ref({
+    page: 1,
+    rowsPerPage: 0,
 });
 
+/**
+ * 建立編輯資料的固定欄位結構。
+ *
+ * @returns {Record<string, string>} 空白編輯資料
+ */
 const createEditRecord = () =>
     Object.fromEntries(
         [
@@ -613,10 +647,14 @@ const createEditRecord = () =>
     );
 
 const editRecord = reactive(createEditRecord());
-const numberFormatter = new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 0,
-});
 
+/**
+ * 將陣列依指定長度切分為多列。
+ *
+ * @param {Array} items - 原始資料
+ * @param {number} size - 每列資料筆數
+ * @returns {Array[]} 切分後的資料列
+ */
 const chunk = (items, size) => {
     const rows = [];
     for (let index = 0; index < items.length; index += size) {
@@ -695,51 +733,59 @@ const benefitEditRows = computed(() => {
     return chunk(fields, 5);
 });
 
-const getRowKey = (row) =>
+/**
+ * 建立明細表格列的唯一鍵值。
+ *
+ * @param {Record<string, unknown>} row - 明細資料
+ * @param {number} index - 原始資料索引
+ * @returns {string} 表格列鍵值
+ */
+const getRowKey = (row, index) =>
     JSON.stringify([
         row.TBL_NAME,
         row.SER_NO,
         row.POLICY_NO,
         row.UPDATE_TIME,
         row.INSR_TYPE,
+        index,
     ]);
 
-const getSourceIndex = (row) => resultList.value.indexOf(row);
+const resultTableRows = computed(() =>
+    resultList.value.map((row, index) => ({
+        ...row,
+        _rowKey: getRowKey(row, index),
+        _sourceIndex: index,
+    })),
+);
 
-const sortedResultList = computed(() => {
-    if (!sortState.field) {
-        return resultList.value;
-    }
+const hasSelectedRecord = computed(() => selectedRows.value.length > 0);
 
-    const sortedRows = [...resultList.value].sort((left, right) =>
-        String(left[sortState.field] ?? "").localeCompare(
-            String(right[sortState.field] ?? ""),
-            "zh-Hant",
-        ),
-    );
-
-    return sortState.descending ? sortedRows.reverse() : sortedRows;
-});
-
-const formatNumber = (value) => {
-    if (value === null || value === undefined || value === "") {
-        return "";
-    }
-
-    const number = Number(value);
-    return Number.isNaN(number) ? value : numberFormatter.format(number);
-};
-
+/**
+ * 顯示後端回傳的頁面通知。
+ *
+ * @param {string[]} notifications - 通知訊息
+ * @returns {void}
+ */
 const notifyMessages = (notifications = []) => {
-    notifications.forEach((message) => $q.notify(message));
+    notifications.forEach((message) => $notify.info(message));
 };
 
+/**
+ * 清除選取列與編輯資料。
+ *
+ * @returns {void}
+ */
 const clearSelection = () => {
-    selectedRecordKey.value = "";
-    selectedItemIndex.value = null;
+    selectedRows.value = [];
     Object.assign(editRecord, createEditRecord());
 };
 
+/**
+ * 套用後端回傳的完整頁面資料。
+ *
+ * @param {Record<string, any>} pageData - 頁面回應資料
+ * @returns {void}
+ */
 const applyPageData = (pageData) => {
     setValues({
         inputId: pageData.inputId ?? "",
@@ -758,67 +804,19 @@ const applyPageData = (pageData) => {
     notifyMessages(pageData.notifications);
 };
 
-const buildFormPayload = () => {
-    const payload = {
-        inputId: inputId.value,
-        role: role.value,
-        status: status.value,
-        ...Object.fromEntries(EDIT_REQUEST_KEYS.map((key) => [key, editRecord[key]])),
-    };
-
-    if (showReturnOption.value && isReturnChecked.value) {
-        payload.IS_RETURN = isReturnChecked.value;
-    }
-    if (selectedItemIndex.value !== null) {
-        payload.item = selectedItemIndex.value;
-    }
-
-    return payload;
-};
-
-const executeAction = async (action) => {
-    const res = await $cathayAxios.post(`afy10100/${action}`, buildFormPayload());
-    if (res.returnCode !== 0) {
+/**
+ * 將選取明細映射至編輯區。
+ *
+ * @param {Record<string, any>[]} rows - CxlTable 選取資料
+ * @returns {void}
+ */
+const updateSelectedRows = (rows) => {
+    selectedRows.value = rows;
+    const row = rows[0];
+    if (!row) {
+        Object.assign(editRecord, createEditRecord());
         return;
     }
-    applyPageData(res.data);
-};
-
-const doQuery = () => executeAction("query");
-const doEdit = () => executeAction("edit");
-const doDelete = () => executeAction("delete");
-const doAsync = () => executeAction("async");
-
-const doAsyncCheck = async () => {
-    const { valid } = await validate();
-    if (!valid) {
-        return;
-    }
-
-    const res = await $cathayAxios.post("afy10100/asynccheckid", {
-        inputId: inputId.value,
-    });
-    if (res.returnCode !== 0) {
-        return;
-    }
-
-    if (res.data.isIdError === "Y") {
-        asyncConfirmationMessage.value = `輸入值 ${inputId.value} 不符身份證/統一證號檢核規則，請確認，是否要繼續作業?`;
-        showAsyncConfirmation.value = true;
-        return;
-    }
-
-    await doAsync();
-};
-
-const confirmAsync = async () => {
-    showAsyncConfirmation.value = false;
-    await doAsync();
-};
-
-const selectItem = (row) => {
-    selectedRecordKey.value = getRowKey(row);
-    selectedItemIndex.value = getSourceIndex(row);
 
     const values = Object.fromEntries(
         EDIT_REQUEST_KEYS.map((key) => [key, row[key] ?? ""]),
@@ -832,6 +830,123 @@ const selectItem = (row) => {
     // TODO: UNKNOWN_SYNTAX - parseEUDC();
 };
 
+/**
+ * 建立查詢、修改或刪除所需的請求資料。
+ *
+ * @returns {Record<string, any>} API 請求資料
+ */
+const buildFormPayload = () => {
+    const payload = {
+        inputId: inputId.value,
+        role: role.value,
+        status: status.value,
+        ...Object.fromEntries(EDIT_REQUEST_KEYS.map((key) => [key, editRecord[key]])),
+    };
+
+    if (showReturnOption.value && isReturnChecked.value) {
+        payload.IS_RETURN = isReturnChecked.value;
+    }
+    if (selectedRows.value[0]) {
+        payload.item = selectedRows.value[0]._sourceIndex;
+    }
+
+    return payload;
+};
+
+/**
+ * 呼叫指定 AFY10100 操作並更新頁面資料。
+ *
+ * @param {string} endpoint - API endpoint
+ * @returns {Promise<void>}
+ */
+const executeAction = async (endpoint) => {
+    const response = await $cathayAxios.post(endpoint, buildFormPayload());
+    if (response.returnCode !== 0) {
+        return;
+    }
+    applyPageData(response.data);
+};
+
+/**
+ * 查詢公會通報資料。
+ *
+ * @returns {Promise<void>}
+ */
+const doQuery = () => executeAction(afy10100Service.query);
+
+/**
+ * 修改選取的公會通報資料。
+ *
+ * @returns {Promise<void>}
+ */
+const doEdit = () => executeAction(afy10100Service.edit);
+
+/**
+ * 刪除選取的公會通報資料。
+ *
+ * @returns {Promise<void>}
+ */
+const doDelete = () => executeAction(afy10100Service.delete);
+
+/**
+ * 即時取回公會通報資料。
+ *
+ * @returns {Promise<void>}
+ */
+const doAsync = () => executeAction(afy10100Service.async);
+
+/**
+ * 驗證身分證號後執行即時取回。
+ *
+ * @returns {Promise<void>}
+ */
+const doAsyncCheck = async () => {
+    const { valid } = await validate();
+    if (!valid) {
+        return;
+    }
+
+    const response = await $cathayAxios.post(afy10100Service.asyncCheckId, {
+        inputId: inputId.value,
+    });
+    if (response.returnCode !== 0) {
+        return;
+    }
+
+    if (response.data.isIdError === "Y") {
+        asyncConfirmationMessage.value = `輸入值 ${inputId.value} 不符身份證/統一證號檢核規則，請確認，是否要繼續作業?`;
+        showAsyncConfirmation.value = true;
+        return;
+    }
+
+    await doAsync();
+};
+
+/**
+ * 關閉即時取回確認視窗。
+ *
+ * @returns {void}
+ */
+const closeAsyncConfirmation = () => {
+    showAsyncConfirmation.value = false;
+};
+
+/**
+ * 確認略過證號檢核並即時取回資料。
+ *
+ * @returns {Promise<void>}
+ */
+const confirmAsync = async () => {
+    closeAsyncConfirmation();
+    await doAsync();
+};
+
+/**
+ * 開啟通報資料明細視窗。
+ *
+ * @param {Record<string, any>} row - 選取的明細資料
+ * @returns {void}
+ */
 const openDetail = (row) => {
     detailParams.value = Object.fromEntries(
         DETAIL_PARAMETER_KEYS.map((key) => [key, row[key] ?? ""]),
@@ -839,29 +954,27 @@ const openDetail = (row) => {
     showDetail.value = true;
 };
 
-const sortResults = (field) => {
-    if (sortState.field === field) {
-        sortState.descending = !sortState.descending;
-        return;
-    }
-
-    sortState.field = field;
-    sortState.descending = false;
+/**
+ * 關閉通報資料明細視窗。
+ *
+ * @returns {void}
+ */
+const closeDetail = () => {
+    showDetail.value = false;
 };
 
-const sortIndicator = (field) => {
-    if (sortState.field !== field) {
-        return "▼";
-    }
-    return sortState.descending ? "▼" : "▲";
-};
-
+/**
+ * 處理頁面功能鍵操作。
+ *
+ * @param {KeyboardEvent} event - 鍵盤事件
+ * @returns {void}
+ */
 const handleHotKey = (event) => {
     const actions = {
         F2: doQuery,
         F8: isAllow.value ? doAsyncCheck : null,
-        F9: selectedRecordKey.value ? doEdit : null,
-        F10: selectedRecordKey.value ? doDelete : null,
+        F9: hasSelectedRecord.value ? doEdit : null,
+        F10: hasSelectedRecord.value ? doDelete : null,
     };
     const action = actions[event.key];
     if (!action) {
@@ -872,47 +985,26 @@ const handleHotKey = (event) => {
     action();
 };
 
-onMounted(async () => {
-    window.addEventListener("keydown", handleHotKey);
-
-    // TODO: OVER_APPROXIMATION - 待複查 inputId、role、status、isReturn、isAllow、dataMap、resultList、INSRMAP、oiuIndDesc、saleChnlDesc 是否皆須由 prompt 端點取得（原始來源為伺服器資料注入）
-    const res = await $cathayAxios.post("afy10100/prompt", {});
-    if (res.returnCode !== 0) {
+/**
+ * 載入 AFY10100 初始頁面資料。
+ *
+ * @returns {Promise<void>}
+ */
+const loadPageData = async () => {
+    // TODO: OVER_APPROXIMATION - 待複查 prompt 端點回傳欄位是否與原伺服器注入資料完全一致。
+    const response = await $cathayAxios.post(afy10100Service.prompt, {});
+    if (response.returnCode !== 0) {
         return;
     }
-    applyPageData(res.data);
+    applyPageData(response.data);
+};
+
+onMounted(async () => {
+    window.addEventListener("keydown", handleHotKey);
+    await loadPageData();
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener("keydown", handleHotKey);
 });
 </script>
-
-<style scoped lang="scss">
-.afy10100 {
-    min-width: 0;
-
-    &__table-scroll {
-        overflow-x: auto;
-    }
-
-    &__notes {
-        margin: 0;
-        padding-left: 1.5rem;
-
-        li + li {
-            margin-top: 0.35rem;
-        }
-    }
-
-    :deep(table) {
-        min-width: max-content;
-    }
-
-    :deep(th),
-    :deep(td) {
-        white-space: normal;
-        vertical-align: middle;
-    }
-}
-</style>
