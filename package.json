@@ -1,0 +1,29 @@
+{
+  "name": "af-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@quasar/extras": "^2.0.4",
+    "@vee-validate/yup": "^4.15.1",
+    "axios": "^1.19.0",
+    "pinia": "^4.0.3",
+    "quasar": "^2.25.1",
+    "vee-validate": "^4.15.1",
+    "vue": "^3.5.40",
+    "vue-cathaylife-component": "file:vue-cathaylife-component.tgz",
+    "vue-router": "^5.2.0",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@quasar/vite-plugin": "^2.0.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "sass-embedded": "^1.102.0",
+    "vite": "^8.2.0"
+  }
+}
