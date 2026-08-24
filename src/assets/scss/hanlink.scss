@@ -1,0 +1,26 @@
+@font-face {
+  font-family: "EUDC";
+  src: url(@/assets/font/eudc.ttf) format("truetype");
+  unicode-range: U+E000-FFFF;
+}
+
+.cxl-font-eudc {
+  font-family:
+    Noto Sans TC,
+    EUDC;
+}
+
+// 調整難字樣式
+.ime-window {
+  width: 282px !important;
+  .ime-input {
+    width: 282px !important;
+    height: 31px !important;
+    background-color: #03c666 !important;
+    position: relative !important;
+    top: 5px !important;
+    left: -10px !important;
+    border: none !important;
+    border-radius: 5px !important;
+  }
+}

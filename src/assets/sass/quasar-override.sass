@@ -1,0 +1,582 @@
+@use 'sass:color'
+
+// ============================================================
+// Legacy Design Token Mapping
+// ============================================================
+
+// Primary green palette (from legacy)
+$lg-green-light:   #C7E49C
+$lg-green-mid:     #96B469
+$lg-green-dark:    #6B8D6D
+$lg-green-text:    #006600
+$lg-green-bright:  #339900
+$lg-green-border:  #ADC891
+$lg-green-bg1:     #F2F9EC
+$lg-green-title:   #D8F466
+$lg-green-darker:  #2B4B21
+$lg-green-border2: #669027
+$lg-green-btn:     #44774A
+
+// Accent / neutral palette
+$lg-yellow-0:      #DEC87C
+$lg-yellow-1:      #EEF1A7
+$lg-yellow-2:      #FAFBE1
+$lg-yellow-bg:     #FFFFCC
+$lg-blue-dark:     #003366
+$lg-blue-link:     #0066CC
+$lg-blue-link2:    #0066FF
+$lg-red:           #FF0000
+$lg-red-dark:      #990000
+$lg-gray-border:   #999999
+$lg-gray-light:    #E1E1E1
+
+// Font stack matching legacy primary font
+$lg-font-stack: 'PMingLiU', 'MingLiU', 'Microsoft JhengHei', 'Meiryo', 'Arial', 'Arial Unicode MS', 'Helvetica', sans-serif
+
+// Button gradient matching legacy .button
+$lg-btn-top:    #eff6ec
+$lg-btn-mid:    #ffffff
+$lg-btn-bottom: #cfe4c1
+
+// ============================================================
+// Global Base
+// ============================================================
+
+// Typography – align Quasar's default Roboto font to legacy CJK-first stack
+body
+  font-family: $lg-font-stack !important
+  font-size:   10pt !important
+
+input,
+textarea,
+select,
+.q-field__native,
+.q-field__input
+  font-family: $lg-font-stack !important
+
+// Table cell wrapping – legacy had white-space: normal (merged into QTable section below)
+
+// ============================================================
+// QBtn → maps to legacy .button / .button1 / .buttonRed
+// ============================================================
+
+// Default filled button – mimics legacy .button (green gradient)
+.q-btn.q-btn--standard:not(.q-btn--outline):not(.q-btn--flat):not(.q-btn--unelevated)
+  background:      linear-gradient(to bottom, $lg-btn-top 0%, $lg-btn-mid 40%, $lg-btn-bottom 100%) !important
+  border:          1px solid $lg-green-dark !important
+  color:           $lg-green-text !important
+  font-size:       10pt !important
+  font-family:     $lg-font-stack !important
+  text-transform:  none !important
+  letter-spacing:  normal !important
+  border-radius:   2px !important
+  height:          21px !important
+  min-height:      21px !important
+  line-height:     19px !important
+  padding:         0px 10px !important
+  white-space:     nowrap !important
+  vertical-align:  middle !important
+  margin:          2px !important
+  box-shadow:      none !important
+
+  &:before
+    box-shadow: none !important
+
+  // Hover state to echo legacy feel
+  &:hover:not(.disabled)
+    background: linear-gradient(to bottom, color.adjust($lg-btn-top, $lightness: -3%) 0%, color.adjust($lg-btn-mid, $lightness: -3%) 40%, color.adjust($lg-btn-bottom, $lightness: -3%) 100%) !important
+
+// Negative / destructive button – mimics legacy .buttonRed
+.q-btn--negative.q-btn--standard:not(.q-btn--outline):not(.q-btn--flat)
+  background:     linear-gradient(to bottom, #fff0f0 0%, #ffffff 35%, #ffdddd 100%) !important
+  border:         1px solid $lg-red-dark !important
+  color:          $lg-red-dark !important
+  text-transform: none !important
+
+// Dense variant – mimics legacy .button1
+.q-btn--dense
+  font-size:  9pt !important
+  height:     17px !important
+  min-height: 17px !important
+  line-height: 16px !important
+
+// Flat / outline buttons – preserve Quasar default but fix font/case
+.q-btn--flat,
+.q-btn--outline
+  text-transform: none !important
+  font-family:    $lg-font-stack !important
+
+// ============================================================
+// QInput / QSelect / QField → maps to legacy .textBox family
+// ============================================================
+
+// Collapse the wrapper so it matches legacy single-line input height
+.q-field
+  padding-bottom: 0 !important
+  margin:         2px 3px !important
+
+  &__bottom
+    min-height:  0 !important
+    padding-top: 6px !important
+    font-size:   9px !important
+    white-space: nowrap !important
+
+  &__control
+    color:       #000 !important
+    font-weight: 400 !important
+
+// Strip dense field down to legacy input row height (~20px)
+.q-field--dense
+  .q-field__control
+    min-height: 22px !important
+    height:     22px !important
+
+  .q-field__native,
+  .q-field__input
+    padding-top:    2px !important
+    padding-bottom: 2px !important
+    min-height:     18px !important
+
+  .q-field__marginal
+    height: 22px !important
+
+// outlined — white bg on control; ::before handles the visible border (z-index above native)
+.q-field--outlined
+  .q-field__control
+    border-radius:    0 !important
+    // background-color: #fff !important
+
+    &:before
+      border:  1px solid #000 !important
+      z-index: 1 !important
+
+    &:hover:before
+      border-color: #000 !important
+
+  &.q-field--highlighted
+    .q-field__control:after
+      border-color: $lg-green-dark !important
+
+// standard — white bg on control, black bottom border via ::before
+.q-field--standard
+  .q-field__control
+    // background-color: #fff !important
+
+    &:before
+      border-bottom: 1px solid #000 !important
+
+    &:hover:before
+      border-bottom-color: #000 !important
+
+  &.q-field--highlighted .q-field__control:after
+    background: $lg-green-dark !important
+
+// native/input — transparent so control's white shows; ::before border paints on top
+.q-field__native,
+.q-field__input
+  font-size:        10pt !important
+  letter-spacing:   normal !important
+  color:            #000 !important
+  background-color: transparent !important
+  border:           none !important
+  padding:          1px 4px !important
+
+// Hide floating label — legacy inputs had no floating label
+.q-field__label
+  // display: none !important
+  font-size: 10px !important
+  top: 0px !important
+
+// Error bottom message colour
+.q-field--error .q-field__bottom
+  color: $lg-red !important
+
+// Read-only → transparent background, dashed border
+.q-field--readonly
+  .q-field__control
+    background-color: transparent !important
+    border-style:     dashed !important
+    border-color:     $lg-gray-border !important
+
+  &.q-field--outlined .q-field__control:before
+    border-color: transparent !important
+
+// Disabled → yellowish tint matches legacy .textBoxDisable
+.q-field--disabled
+  .q-field__control
+    background-color: $lg-yellow-bg !important
+
+  .q-field__control > div
+    opacity: 1 !important
+
+  .q-field__native
+    color: #000 !important
+
+// Borderless wrapper used to group inputs inside table cells — no chrome
+// Control itself stays transparent; white bg is on the inner input/select
+.q-field--borderless
+  .q-field__control
+    background: transparent !important
+    padding:    0 !important
+    min-height: 0 !important
+    height:     auto !important
+
+  // Inner input/select elements — transparent, border comes from their own control
+  .q-field__native,
+  .q-field__input
+    background: transparent !important
+    border:     none !important
+
+// ============================================================
+// QSelect
+// ============================================================
+
+.q-select
+  .q-field__control
+    border-radius: 0 !important
+    // background:    #fff !important
+    border:        1px solid #000 !important
+
+  // Shrink the dropdown arrow margin for dense selects
+  &.q-field--dense .q-field__append
+    padding: 0 2px !important
+
+// ============================================================
+// QTable → maps to legacy table.grid + contentTable
+// ============================================================
+
+.q-table__card
+  box-shadow:    none !important
+  border-radius: 0 !important
+  border:        1px solid $lg-green-light !important
+
+.q-table
+  td, th
+    white-space: normal !important
+
+  th
+    background-color: $lg-green-light !important
+    color:            $lg-green-darker !important
+    font-weight:      bold !important
+    font-size:        10pt !important
+    border:           1px solid $lg-green-light !important
+    text-align:       left !important
+    padding:          2px 5px !important
+
+  td
+    border:     1px solid $lg-green-light !important
+    font-size:  10pt !important
+    padding:    2px 5px !important
+
+  // Stripe – alternating rows (optional, matches legacy tbRec pattern)
+  tbody tr:nth-child(even) td
+    background-color: $lg-yellow-2 !important
+
+  // Hover
+  tbody tr:hover td
+    background-color: #F2F9EC !important
+
+// ============================================================
+// QCard → maps to legacy contentDiv / contents area
+// ============================================================
+
+.q-card
+  border-radius: 0 !important
+  box-shadow:    none !important
+  border:        1px solid $lg-green-border !important
+
+.q-card__section
+  padding: 8px 12px !important
+
+// ============================================================
+// QDialog → maps to legacy popup / BoxCase
+// ============================================================
+
+.q-dialog__inner > .q-card
+  border-radius: 0 !important
+  min-width:     320px
+
+// Title bar
+.q-dialog__inner .q-card__section--head,
+.q-dialog__inner .q-bar
+  background:     $lg-green-light !important
+  color:          $lg-green-darker !important
+  font-weight:    bold !important
+  letter-spacing: 2px !important
+  font-size:      13px !important
+
+// ============================================================
+// QToolbar / QHeader → maps to legacy .titleBar / .borderText
+// ============================================================
+
+.q-toolbar
+  background:     $lg-green-light !important
+  color:          $lg-green-darker !important
+  min-height:     30px !important
+  padding:        0 6px !important
+
+.q-toolbar__title
+  font-size:      13pt !important
+  font-weight:    bold !important
+  color:          $lg-green-bright !important
+  letter-spacing: 3pt !important
+
+// ============================================================
+// QBanner → maps to legacy validation-advice
+// ============================================================
+
+.q-banner--negative
+  background: #FF3300 !important
+  color:      #fff !important
+  font-weight: bold !important
+
+.q-banner--warning
+  background: #C8AA00 !important
+  color:      #fff !important
+  font-weight: bold !important
+
+// ============================================================
+// QBadge → maps to legacy .textError / .textWarning colouring
+// ============================================================
+
+.q-badge--color-negative
+  background-color: $lg-red !important
+
+.q-badge--color-warning
+  background-color: #FFCC00 !important
+  color:            #000 !important
+
+// ============================================================
+// QSeparator → align with legacy table/content borders
+// ============================================================
+
+.q-separator
+  background-color: $lg-green-border !important
+
+// ============================================================
+// QTabs → maps to legacy panel / tab styling
+// ============================================================
+
+.q-tabs
+  border-bottom: 3px solid $lg-green-border2 !important
+  background:    $lg-green-bg1 !important
+
+.q-tab
+  text-transform: none !important
+  font-family:    $lg-font-stack !important
+  font-size:      10pt !important
+  color:          $lg-green-text !important
+
+  &--active
+    color:       $lg-green-bright !important
+    font-weight: bold !important
+
+.q-tab__indicator
+  background: $lg-green-bright !important
+
+// ============================================================
+// Checkbox / Radio → keep default Quasar but tint with green
+// ============================================================
+
+.q-checkbox__bg,
+.q-radio__bg
+  border-color: $lg-green-dark !important
+
+.q-checkbox__bg path
+  stroke: $lg-green-dark !important
+
+.q-checkbox--dark-mode .q-checkbox__bg,
+.q-radio--dark .q-radio__inner
+  border-color: $lg-green-light !important
+
+// ============================================================
+// QDate / QTime → minimal tint to green theme
+// ============================================================
+
+.q-date__header
+  background: $lg-green-dark !important
+
+.q-date__today
+  background:    $lg-green-light !important
+  border-radius: 0 !important
+
+.q-date__range-from .q-btn,
+.q-date__range-to .q-btn,
+.q-date__edit-range-from .q-btn,
+.q-date__edit-range-to .q-btn,
+.q-date__range .q-btn--active
+  background-color: $lg-green-mid !important
+
+// ============================================================
+// QScrollArea → match legacy scrollbar-track-color
+// ============================================================
+
+.q-scrollarea__thumb
+  background: $lg-green-mid !important
+
+// ============================================================
+// Notification (Notify plugin)
+// ============================================================
+
+.q-notification
+  font-family:   $lg-font-stack !important
+  border-radius: 0 !important
+
+.q-notification--positive
+  background: $lg-green-dark !important
+
+.q-notification--negative
+  background: $lg-red-dark !important
+
+.q-notification--warning
+  background: #B27000 !important
+  color:      #fff !important
+
+// // ============================================================
+// // Utility overrides – preserved from legacy class names
+// // ============================================================
+
+// // Keep legacy helper classes working alongside Quasar
+// .textError
+//   font-size:   12pt !important
+//   color:       $lg-red !important
+//   font-weight: bold !important
+
+// .textWarning
+//   font-size:   12pt !important
+//   color:       #FFCC00 !important
+//   font-weight: bold !important
+
+// .textNotify
+//   font-size:   12pt !important
+//   color:       blue !important
+//   font-weight: bold !important
+
+// .textBold
+//   font-size:   10pt !important
+//   font-weight: bold !important
+//   line-height: 21px !important
+
+// .textRed
+//   color: $lg-red !important
+
+// .textRedBold
+//   color:       $lg-red !important
+//   font-weight: bold !important
+
+// // ============================================================
+// // Page body background – legacy was #F0FBC6
+// // ============================================================
+
+// body
+//   background-color: #F0FBC6 !important
+
+// // ============================================================
+// // Legacy table classes – tbBox2 / tbYellow / tbYellow2 / tbBlue
+// // These appear in q-markup-table and plain <table> alike
+// // ============================================================
+
+// // Outer table wrapper matching legacy .tbBox2
+// // border: right/bottom = #6B8D6D, left/top = #FFFFFF — use dark green as gap fill
+// .tbBox2
+//   border-collapse: collapse !important
+//   border-spacing:  1px !important
+//   background:      $lg-green-dark !important
+//   width:           100% !important
+
+//   // q-markup-table wraps content in .q-table — flatten it
+//   &.q-markup-table .q-table
+//     width: 100% !important
+
+//   td, th
+//     padding:   2px 4px !important
+//     font-size: 10pt !important
+//     border:    1px solid $lg-green-border !important
+
+// // cm.css .tbYellow = #EEF1A7
+// .tbYellow
+//   background-color: $lg-yellow-1 !important
+
+// // Value cells – cm.css .tbYellow2 = #FAFBE1
+// .tbYellow2
+//   background-color: $lg-yellow-2 !important
+//   color:            #000 !important
+//   vertical-align:   middle !important
+
+// // Blue header label cells – cm.css .tbBlue = #99CCFF
+// .tbBlue
+//   background-color: #99CCFF !important
+//   color:            $lg-blue-dark !important
+//   font-weight:      bold !important
+//   text-align:       center !important
+//   vertical-align:   middle !important
+//   white-space:      nowrap !important
+
+// // Result table header row (th inside tableC)
+// #tableC th
+//   background-color: $lg-green-light !important
+//   color:            $lg-green-darker !important
+//   font-weight:      bold !important
+//   text-align:       left !important
+//   padding:          2px 4px !important
+
+// // ============================================================
+// // QMarkupTable cell overrides — Quasar adds its own td/th style
+// // ============================================================
+
+.q-markup-table
+  border-collapse: collapse !important
+  border-spacing:  0 !important
+  box-shadow:      none !important
+
+  td, th
+    padding:    2px 4px !important
+    border:     1px solid $lg-green-border !important
+    font-size:  10pt !important
+
+// ============================================================
+// QField inside table cells — make borderless wrapper invisible
+// so the raw q-input / q-select sits flush in the cell
+// ============================================================
+
+td .q-field--borderless,
+th .q-field--borderless
+  padding:    0 !important
+  margin:     0 !important
+
+  .q-field__control
+    min-height: 20px !important
+    height:     20px !important
+    padding:    0 2px !important
+
+  .q-field__native,
+  .q-field__input
+    padding-top:    1px !important
+    padding-bottom: 1px !important
+    min-height:     18px !important
+
+// ============================================================
+// Radio button color fix — use green accent instead of Quasar blue
+// ============================================================
+
+.q-radio__inner--truthy .q-radio__check
+  background: $lg-green-bright !important
+
+.q-radio__inner--truthy
+  color: $lg-green-bright !important
+
+// ============================================================
+// Contents header bar — mimics legacy .contentsTh
+// ============================================================
+
+.contentsTh
+  background:  $lg-green-light !important
+  color:       $lg-green-darker !important
+  font-weight: bold !important
+  padding:     3px 6px !important
+  font-size:   10pt !important
+  border:      1px solid $lg-green-border !important
+
+
+.q-table--dense .q-table tbody td
+  height: 48px

@@ -1,7 +1,3 @@
-/**
- * 共用工具函式集：身分證／統一編號驗證、民國西元日期互換、姓名遮蔽等
- * 使用方式：const { checkROCID, formatDate, ... } = useCommonUtil()
- */
 export default function () {
   /*「統一編號」相關 */
 
@@ -260,9 +256,9 @@ export default function () {
   }
 
   /**
-   * 將 YYYYMMDD 格式日期轉為 YYYY-MM-DD
+   * format date
    * @param {string} inputDate 輸入日期 (ex: YYYYMMDD)
-   * @param {*} [mark] 未使用，保留參數位置供相容呼叫
+   * @param mark
    * @returns {string} outputDate 輸出日期 YYYY-MM-DD
    */
   function formatToDate(inputDate, mark) {
@@ -282,7 +278,7 @@ export default function () {
    * 計算年齡
    * @param {string} date 日期 (YYYY-MM-DD)
    * @param {string} birthday 生日 (YYYY-MM-DD)
-   * @param {boolean} [ceDateWithoutDash] 傳入日期是否為無分隔線的西元格式 (YYYYMMDD)
+   * @param {boolean} ceDateWithoutDash
    * @returns {string} age 年齡
    */
   function calAge(date, birthday, ceDateWithoutDash) {
@@ -619,7 +615,7 @@ export default function () {
    * 遮蔽方式：以＊取代第一個字與最後一個字之間的文字
    * 若僅傳入一個字，以＊新增至最後一個字
    * 若僅傳入二個字，以＊最後一個字之間的文字
-   * @param {string} name 姓名
+   * @param name
    * @returns {string} 遮蔽姓名
    */
   function getMaskName(name) {

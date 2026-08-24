@@ -1,0 +1,11 @@
+/** 顯示國泰難字 **/
+@font-face {
+  font-family: "EUDC";
+  src:
+    local("EUDC"),
+    url(@/assets/font/eudc.woff) format("truetype"),
+    url(@/assets/font/eudc.woff) format("truetype");
+}
+.cxl-font-eudc {
+  font-family: "Noto Sans TC", "EUDC";
+}

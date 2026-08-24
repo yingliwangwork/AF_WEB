@@ -2,44 +2,45 @@
   <div></div>
 </template>
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import propsDef from "./modules/WaterMaker.js";
-import dayjs from "dayjs";
+  import { ref, watch, onMounted, onBeforeUnmount } from "vue";
+  import propsDef from "@/components/common/modules/WaterMaker.js";
+  import dayjs from "dayjs";
 
-const props = defineProps(propsDef);
+  const props = defineProps(propsDef);
 
-onMounted(() => {
+  onMounted(() => {
     // 確認DOM物件生成後，再執行渲染浮水印
     if (props.show && props.defaultDisplay) {
-        init();
+      init();
     }
     if (props.inputAllowDele) {
-        Monitor();
+      Monitor();
     }
-});
+  });
 
-const textArray = ref([
+  const textArray = ref([
     {
-        inputText: "內部畫面 嚴禁外流",
-        x: 220,
-        y: 200,
+      inputText: "內部畫面 嚴禁外流",
+      x: 220,
+      y: 200,
     },
     {
-        inputText: "查獲屬實送人管單位處分",
-        x: 220,
-        y: 250,
+      inputText: "查獲屬實送人管單位處分",
+      x: 220,
+      y: 250,
     },
     { inputText: dayjs().format("YYYY-MM-DD HH:mm:ss"), x: 220, y: 300 },
-]);
-if (props.inputText) {
+  ]);
+  if (props.inputText) {
     textArray.value.unshift({ inputText: props.inputText, x: 210, y: 150 });
-}
+  }
 
-const maskDiv = ref(null);
-/**
- * 初始化
-*/
-const init = () => {
+  const maskDiv = ref(null);
+  let observer;
+  /**
+   * 初始化
+  */
+  const init = () => {
     const canvas = document.createElement("canvas");
     canvas.id = "canvas";
     canvas.width = props.width;
@@ -55,7 +56,7 @@ const init = () => {
     ctx.textBaseline = "middle";
 
     textArray.value.forEach((text) => {
-        ctx.fillText(text.inputText, text.x, text.y);
+      ctx.fillText(text.inputText, text.x, text.y);
     });
 
     const src = canvas.toDataURL("image/png");
@@ -71,77 +72,77 @@ const init = () => {
     maskDiv.value.alive = true;
 
     document.body.appendChild(maskDiv.value);
-};
+  };
 
-watch(
+  watch(
     () => props.show,
     (newVal) => {
-        if (newVal === true || (newVal === undefined && props.defaultDisplay)) {
+      if (newVal === true || (newVal === undefined && props.defaultDisplay)) {
         createMaskDiv();
-        } else {
+      } else {
         removeMaskDiv();
-        }
+      }
     },
-);
+  );
 
-/**
- * 刪除浮水印DOM
-*/
-const removeMaskDiv = () => {
-if (maskDiv.value.id && maskDiv.value.alive) {
-    document.body.removeChild(maskDiv.value);
-    maskDiv.value.alive = false;
-}
-};
+  /**
+   * 刪除浮水印DOM
+  */
+  const removeMaskDiv = () => {
+    if (maskDiv.value.id && maskDiv.value.alive) {
+      document.body.removeChild(maskDiv.value);
+      maskDiv.value.alive = false;
+    }
+  };
 
-/**
- * 生成浮水印
-*/
-const createMaskDiv = () => {
-if (!maskDiv.value?.alive) {
-    init();
-}
-};
+  /**
+   * 生成浮水印
+  */
+  const createMaskDiv = () => {
+    if (!maskDiv.value?.alive) {
+      init();
+    }
+  };
 
-/**
- * 浮水印監聽事件
-*/
-const Monitor = () => {
-const body = document.getElementsByTagName("body")[0];
-const options = {
-    childList: true,
-    attributes: true,
-    characterData: true,
-    subtree: true,
-    attributeOldValue: true,
-    characterDataOldValue: true,
-};
-const observer = new MutationObserver(callback);
-observer.observe(body, options); // 掛載監聽
-};
+  /**
+   * 浮水印監聽事件
+  */
+  const Monitor = () => {
+    const body = document.getElementsByTagName("body")[0];
+    const options = {
+      childList: true,
+      attributes: true,
+      characterData: true,
+      subtree: true,
+      attributeOldValue: true,
+      characterDataOldValue: true,
+    };
+    observer = new MutationObserver(callback);
+    observer.observe(body, options); // 掛載監聽
+  };
 
-/**
- * callback
-* @param {Array} mutations - mutations
-*/
-const callback = (mutations) => {
+  /**
+   * callback
+  * @param {Array} mutations - mutations
+  */
+  const callback = (mutations) => {
     // 當attribute被改變時
     if (mutations[0].target.id === "_waterMark") {
-        removeMaskDiv();
+      removeMaskDiv();
     }
 
     // 當節點被刪除時
     if (
-        mutations[0].removedNodes[0] &&
-        mutations[0].removedNodes[0].id === "_waterMark"
+      mutations[0].removedNodes[0] &&
+      mutations[0].removedNodes[0].id === "_waterMark"
     ) {
-        init();
+      init();
     }
-};
+  };
 
-// 該元件結束生命週期時，必須移除浮水印以及相關監控，否則會發生重疊
-onBeforeUnmount(() => {
+  // 該元件結束生命週期時，必須移除浮水印以及相關監控，否則會發生重疊
+  onBeforeUnmount(() => {
     removeMaskDiv();
     observer.disconnect();
-});
+  });
 </script>

@@ -1,0 +1,86 @@
+.cxl-radio {
+    font-size: 16px;
+    font-weight: 400;
+    color: #4a4a4a;
+
+    // 隱藏 hover 的灰圈圈
+    :before {
+        display: none;
+    }
+
+    .q-radio--dense .q-radio__inner,
+    &.q-radio--dense .q-radio__inner {
+        width: 0.55em;
+        min-width: 0.55em;
+        height: 0.55em;
+    }
+
+    // seleted status
+    .q-radio__inner--truthy {
+        svg {
+            border: 7px solid #00994e;
+            border-radius: 50%;
+            color: transparent;
+        }
+    }
+
+    // disable status
+    &.disabled,
+    .q-radio.disabled {
+        * {
+            cursor: default !important;
+        }
+
+        .q-radio__inner--truthy {
+            svg {
+                border: 9px solid#a7a7a7;
+                border-radius: 50%;
+                color: transparent;
+            }
+        }
+
+        .q-radio__inner--falsy {
+            svg {
+                background-color: #d8d8d8;
+                border: 1px solid#a7a7a7;
+                border-radius: 50%;
+                color: transparent;
+            }
+        }
+    }
+
+    .q-radio__inner--falsy {
+        svg {
+            border: 1px solid#a7a7a7;
+            border-radius: 50%;
+            color: transparent;
+        }
+
+        &:hover {
+            svg {
+                border: 1px solid #00994e;
+            }
+        }
+    }
+
+    // 調整 radio 位置與寬高
+    .q-radio__bg {
+        top: 8%;
+        width: 100%;
+        height: 100%;
+    }
+
+    .q-radio__inner {
+        color: #a7a7a7;
+    }
+
+    // 調整 disable 時的透明度
+    .q-radio.disabled {
+        opacity: 1 !important;
+        cursor: default !important;
+
+        * {
+            cursor: default !important;
+        }
+    }
+}

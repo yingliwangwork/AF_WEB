@@ -1,6 +1,6 @@
 import { setLocale } from "yup";
 
-/** yup 內建驗證錯誤訊息繁體中文化 */
+/*eslint-disable no-template-curly-in-string*/
 setLocale({
   mixed: {
     default: "無效的 ${path}",
