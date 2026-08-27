@@ -20,6 +20,7 @@ user-invocable: true
 **來源 JSP**: 使用者指定的 `jsp` - 頁面規格的唯一依據
 **既有公開契約**: `./references/legacy/**/*.md` - 既有專案共用能力(*Shared Capability*)之公開契約(*Public Contract*)說明書
 **目標開發規範**: `./references/target/**/*.md` - 目標專案之技術棧、程式碼風格、架構設計原則
+**規格書模板**: `./templates/Spec_template.md` - 產出頁面規格書之格式與內容規範
 **Forbidden**: 禁止存取上述宣告以外之任何檔案或資源
 
 ### Processing Boundary
@@ -141,7 +142,7 @@ user-invocable: true
 **Step 3**: 依引用語法(JS Import、JSP Include、Custom Tag) 查閱既有公開契約(索引: `./references/legacy/index.md`)，取得對應能力之定義內容
 **Step 4**: 尚未取得對應能力之語法，標記為未知語法
 **Step 5**: 掃描來源 JSP 全文，萃取頁面規格(UI/UX 設計、資料顯示、使用者輸入、互動與頁面流程、業務邏輯)
-**Step 6**: 依照[規格書模板](./references/spec-template.md)產出頁面規格書，並將未知語法與技術缺口明確標記於規格書中
+**Step 6**: 依照[規格書模板](./templates/Spec_template.md)產出頁面規格書，並將未知語法與技術缺口明確標記於規格書中
 
 **CheckPoint**:
 1. 頁面規格完整保留
