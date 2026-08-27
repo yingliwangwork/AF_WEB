@@ -25,11 +25,12 @@
 **DTCG**:
 ```yaml
 ```
-> 參照 W3C 規範，提供 DTCG 樣式
+> 參照 W3C 規範，提供 DTCG 樣式(需完整列出，包含樣式屬性，如: `bgColor`)
 
 **ASCII Wireframe**:
 ```plaintext
 ```
+> 完整繪製所有靜態元素，提供完整的佈局資訊
 
 ---
 
